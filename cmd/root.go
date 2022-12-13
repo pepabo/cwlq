@@ -40,6 +40,8 @@ import (
 
 const defaultRegion = "ap-northeast-1"
 
+var fparser string
+
 var rootCmd = &cobra.Command{
 	Use:   "cwlf [DATASOURCE_DSN]",
 	Short: "CloudWatch Logs Filter",
@@ -88,7 +90,12 @@ var rootCmd = &cobra.Command{
 
 		// parser
 		var p parser.Parser
-		p = rdsaudit.New()
+		switch fparser {
+		case "rdsaudit":
+			p = rdsaudit.New()
+		default:
+			return fmt.Errorf("unsuppoted parser: %s", fparser)
+		}
 
 		// filter
 		f := filter.New([]string{})
@@ -117,5 +124,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringVarP(&fparser, "parser", "p", "", "parser type")
 }
