@@ -50,5 +50,6 @@ func (e *LogEvent) UnmarshalJSON(b []byte) error {
 	e.ID = s.ID
 	e.Timestamp = time.UnixMilli(s.Timestamp)
 	e.Message = s.Message
+	e.Raw = b
 	return nil
 }

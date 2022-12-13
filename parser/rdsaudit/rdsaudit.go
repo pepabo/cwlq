@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"io"
 	"reflect"
 	"strconv"
 	"strings"
@@ -87,6 +86,10 @@ func (r *RDSAudit) NewFakeLogEvent() (*datasource.LogEvent, error) {
 	return le, nil
 }
 
+func (r *RDSAudit) Err() error {
+	return r.err
+}
+
 func (a *AuditLog) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"timestamp":       a.Timestamp,
@@ -99,7 +102,7 @@ func (a *AuditLog) ToMap() map[string]interface{} {
 		"database":        a.Database,
 		"object":          a.Object,
 		"retcode":         a.Retcode,
-		"connection_type": a.ConnectionType,
+		"connection_type": a.ConnectionType, // This field is included only for RDS for MySQL version 5.7.34 and higher 5.7 versions, and all 8.0 versions.
 	}
 }
 
@@ -127,41 +130,77 @@ func (a *AuditLog) ToCSV() (string, error) {
 }
 
 func parseMessage(msg string) (*AuditLog, error) {
-	r := csv.NewReader(strings.NewReader(msg))
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
+	record, err := parseLine(msg)
+	if err != nil {
+		return nil, err
+	}
+	if len(record) != 11 && len(record) != 10 {
+		fmt.Println("--------------")
+		fmt.Println(msg)
+		fmt.Println("--------------")
+		for i, v := range record {
+			fmt.Println(i, ":", v)
+			fmt.Println("--------------")
 		}
-		if err != nil {
-			return nil, err
-		}
-		if len(record) != 11 {
-			return nil, fmt.Errorf("invalid message: %#v", msg)
-		}
-		retcode, err := strconv.ParseInt(record[9], 10, 64)
-		if err != nil {
-			return nil, err
-		}
+		return nil, fmt.Errorf("invalid record count(%d): %#v", len(record), record)
+	}
+	retcode, err := strconv.ParseInt(record[9], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	al := &AuditLog{
+		Timestamp:    record[0],
+		Serverhost:   record[1],
+		Username:     record[2],
+		Host:         record[3],
+		Connectionid: record[4],
+		Queryid:      record[5],
+		Operation:    record[6],
+		Database:     record[7],
+		Object:       record[8],
+		Retcode:      retcode,
+	}
+	if len(record) == 11 {
 		connectionType, err := strconv.ParseInt(record[10], 10, 64)
 		if err != nil {
 			return nil, err
 		}
-		return &AuditLog{
-			Timestamp:      record[0],
-			Serverhost:     record[1],
-			Username:       record[2],
-			Host:           record[3],
-			Connectionid:   record[4],
-			Queryid:        record[5],
-			Operation:      record[6],
-			Database:       record[7],
-			Object:         record[8],
-			Retcode:        retcode,
-			ConnectionType: connectionType,
-		}, nil
+		al.ConnectionType = connectionType
 	}
-	return nil, fmt.Errorf("invalid message: %#v", msg)
+	return al, nil
+}
+
+func parseLine(line string) ([]string, error) {
+	const (
+		delimiter = ','
+		quote     = '\''
+		escape    = '\\'
+	)
+	record := []string{}
+	data := []rune{}
+	in := false
+	for _, c := range line {
+		switch c {
+		case quote:
+			if len(data) != 0 && data[len(data)-1] == escape {
+				data = append(data, c)
+				continue
+			}
+			in = !in
+		case delimiter:
+			if in {
+				data = append(data, c)
+			} else {
+				record = append(record, string(data))
+				data = []rune{}
+			}
+		default:
+			data = append(data, c)
+		}
+	}
+	record = append(record, string(data))
+	return record, nil
 }
 
 func init() {

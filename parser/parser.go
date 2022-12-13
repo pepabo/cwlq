@@ -14,4 +14,5 @@ type Parsed struct {
 type Parser interface {
 	Parse(context.Context, <-chan *datasource.LogEvent) <-chan *Parsed
 	NewFakeLogEvent() (*datasource.LogEvent, error)
+	Err() error
 }

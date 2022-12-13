@@ -30,12 +30,15 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/pepabo/cwlf/datasource"
 	"github.com/pepabo/cwlf/datasource/fake"
+	"github.com/pepabo/cwlf/datasource/local"
 	"github.com/pepabo/cwlf/datasource/s3"
 	"github.com/pepabo/cwlf/filter"
 	"github.com/pepabo/cwlf/parser"
 	"github.com/pepabo/cwlf/parser/rdsaudit"
 	"github.com/spf13/cobra"
 )
+
+const defaultRegion = "ap-northeast-1"
 
 var rootCmd = &cobra.Command{
 	Use:   "cwlf [DATASOURCE_DSN]",
@@ -49,7 +52,9 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		cfg.Region = "ap-northeast-1"
+		if cfg.Region == "" {
+			cfg.Region = defaultRegion
+		}
 
 		if err != nil {
 			return err
@@ -64,6 +69,11 @@ var rootCmd = &cobra.Command{
 		switch u.Scheme {
 		case "s3":
 			d, err = s3.New(cfg, dsn)
+			if err != nil {
+				return err
+			}
+		case "local":
+			d, err = local.New(dsn)
 			if err != nil {
 				return err
 			}
@@ -88,6 +98,10 @@ var rootCmd = &cobra.Command{
 		}
 
 		if err := d.Err(); err != nil {
+			return err
+		}
+
+		if err := p.Err(); err != nil {
 			return err
 		}
 
