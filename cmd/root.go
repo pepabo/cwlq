@@ -22,28 +22,79 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"context"
+	"fmt"
+	"net/url"
 	"os"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/pepabo/cwlf/datasource"
+	"github.com/pepabo/cwlf/datasource/fake"
+	"github.com/pepabo/cwlf/datasource/s3"
+	"github.com/pepabo/cwlf/filter"
+	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlf/parser/rdsaudit"
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cwlf",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:   "cwlf [DATASOURCE_DSN]",
+	Short: "CloudWatch Logs Filter",
+	Long:  `CloudWatch Logs Filter.`,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		dsn := args[0]
+		ctx := context.Background()
+		cfg, err := config.LoadDefaultConfig(ctx)
+		if err != nil {
+			return err
+		}
+		cfg.Region = "ap-northeast-1"
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+		if err != nil {
+			return err
+		}
+		u, err := url.Parse(dsn)
+		if err != nil {
+			return err
+		}
+
+		// datasource
+		var d datasource.Datasource
+		switch u.Scheme {
+		case "s3":
+			d, err = s3.New(cfg, dsn)
+			if err != nil {
+				return err
+			}
+		case "fake":
+			d, err = fake.New(dsn)
+			if err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("unsuppoted scheme: %s", dsn)
+		}
+
+		// parser
+		var p parser.Parser
+		p = rdsaudit.New()
+
+		// filter
+		f := filter.New([]string{})
+
+		for e := range f.Filter(ctx, p.Parse(ctx, d.Fetch(ctx))) {
+			fmt.Println(string(e.LogEvent.Raw))
+		}
+
+		if err := d.Err(); err != nil {
+			return err
+		}
+
+		return nil
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -52,13 +103,5 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cwlf.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
