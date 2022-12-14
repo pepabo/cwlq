@@ -1,8 +1,28 @@
 # cwlf
 
-## Parser
+## Usage
+
+WIP
+
+## Support datasource
+
+### S3 bucket
+
+`s3://bucket/path/to`
+
+### Local file or directory
+
+`local://path/to` `local:///root/path/to`
+
+### Fake datasource
+
+`fake://rdsaudit?duration=3sec`
+
+## Support Parser
 
 ### `rdsaudit`
+
+Log via MariaDB Audit Plugin for Amazon RDS.
 
 | Field | Example | Description |
 | --- | --- | --- |
