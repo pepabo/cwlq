@@ -80,6 +80,10 @@ func New(dsn, parserType string, filters []string) (*Cwlf, error) {
 	}, nil
 }
 
+func (c *Cwlf) Outer(o outer.Outer) {
+	c.o = o
+}
+
 func (c *Cwlf) Run(ctx context.Context) (err error) {
 	c.o.Write(ctx, c.f.Filter(ctx, c.p.Parse(ctx, c.d.Fetch(ctx))))
 
