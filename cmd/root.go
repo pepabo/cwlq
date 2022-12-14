@@ -39,8 +39,8 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "cwlq [DATASOURCE_DSN]",
-	Short: "cwlq is a tool for querying logs (of CloudWatch Logs) stored in various datasources",
-	Long:  `cwlq is a tool for querying logs (of CloudWatch Logs) stored in various datasources.`,
+	Short: "cwlq is a tool for querying logs (of Amazon CloudWatch Logs) stored in various datasources",
+	Long:  `cwlq is a tool for querying logs (of Amazon CloudWatch Logs) stored in various datasources.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dsn := args[0]

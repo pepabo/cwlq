@@ -1,6 +1,6 @@
 # cwlq
 
-cwlq is a tool/package for querying logs (of CloudWatch Logs) stored in various datasources.
+cwlq is a tool/package for querying logs (of Amazon CloudWatch Logs) stored in various datasources.
 
 ## Usage
 
