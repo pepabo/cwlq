@@ -135,12 +135,12 @@ func (a *AuditLog) ToCSV() (string, error) {
 }
 
 func parseMessage(msg string) (*AuditLog, error) {
-	record, err := parseLine(msg)
+	record, err := parseCSV(msg)
 	if err != nil {
 		return nil, err
 	}
 	if len(record) != 11 && len(record) != 10 {
-		return nil, fmt.Errorf("invalid record count(%d): %#v", len(record), record)
+		return nil, fmt.Errorf("invalid column count(%d): %#v", len(record), record)
 	}
 	retcode, err := strconv.ParseInt(record[9], 10, 64)
 	if err != nil {
@@ -169,7 +169,7 @@ func parseMessage(msg string) (*AuditLog, error) {
 	return al, nil
 }
 
-func parseLine(line string) ([]string, error) {
+func parseCSV(line string) ([]string, error) {
 	const (
 		delimiter = ','
 		quote     = '\''
