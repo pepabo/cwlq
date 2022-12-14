@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.4
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.29.5
 	github.com/go-faker/faker/v4 v4.0.0-beta.4
+	github.com/google/go-cmp v0.5.8
 	github.com/k1LoW/duration v1.2.0
 	github.com/spf13/cobra v1.6.1
 )
