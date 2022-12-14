@@ -140,13 +140,6 @@ func parseMessage(msg string) (*AuditLog, error) {
 		return nil, err
 	}
 	if len(record) != 11 && len(record) != 10 {
-		fmt.Println("--------------")
-		fmt.Println(msg)
-		fmt.Println("--------------")
-		for i, v := range record {
-			fmt.Println(i, ":", v)
-			fmt.Println("--------------")
-		}
 		return nil, fmt.Errorf("invalid record count(%d): %#v", len(record), record)
 	}
 	retcode, err := strconv.ParseInt(record[9], 10, 64)
