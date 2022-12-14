@@ -64,6 +64,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&parserType, "parser", "p", parser.RDSAudit, "parser type")
-	rootCmd.Flags().StringSliceVarP(&filters, "filter", "f", []string{}, "filter")
+	rootCmd.Flags().StringVarP(&parserType, "parser", "p", parser.RDSAudit, "parser for logs")
+	rootCmd.Flags().StringSliceVarP(&filters, "filter", "f", []string{}, "filter for parsed logs. If multiple filters are specified, they are executed under OR conditions.")
 }
