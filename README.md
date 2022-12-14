@@ -3,7 +3,7 @@
 ## Usage
 
 ``` console
-$ cwlf s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.host == '10.0.1.123'" --filter "object contains 'INSERT'"
+$ cwlf s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.host == '10.0.1.123'" --filter "message.object contains 'INSERT'"
 ```
 
 ## Support datasource
@@ -24,7 +24,7 @@ $ cwlf s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.hos
 
 ### `rdsaudit`
 
-Log via MariaDB Audit Plugin for Amazon RDS.
+Parser for logs via MariaDB Audit Plugin for Amazon RDS.
 
 | Field | Example | Description |
 | --- | --- | --- |
