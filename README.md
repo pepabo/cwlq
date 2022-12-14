@@ -10,13 +10,6 @@ $ cwlq s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.hos
 
 ## Support datasource
 
-### Amazon CloudWatch Logs directly
-
-WIP
-
-> **Note**
-> Perhaps it would be better to use [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html).
-
 ### Amazon S3
 
 `s3://bucket/path/to`
@@ -28,6 +21,13 @@ WIP
 ### Fake datasource
 
 `fake://rdsaudit?duration=3sec`
+
+### Amazon CloudWatch Logs directly
+
+WIP
+
+> **Note**
+> Perhaps it would be better to use [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html).
 
 ## Support Parser
 
