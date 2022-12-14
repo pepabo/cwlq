@@ -9,6 +9,12 @@ import (
 	"github.com/go-faker/faker/v4"
 )
 
+const (
+	S3    = "s3"
+	Local = "local"
+	Fake  = "fake"
+)
+
 type LogEvent struct {
 	ID        string
 	Timestamp time.Time

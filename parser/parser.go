@@ -6,6 +6,8 @@ import (
 	"github.com/pepabo/cwlf/datasource"
 )
 
+const RDSAudit = "rdsaudit"
+
 type Parsed struct {
 	Data     map[string]interface{}
 	LogEvent *datasource.LogEvent

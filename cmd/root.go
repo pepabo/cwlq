@@ -53,36 +53,32 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dsn := args[0]
 		ctx := context.Background()
-		cfg, err := config.LoadDefaultConfig(ctx)
-		if err != nil {
-			return err
-		}
-		if cfg.Region == "" {
-			cfg.Region = defaultRegion
-		}
 
-		if err != nil {
-			return err
-		}
+		// datasource
 		u, err := url.Parse(dsn)
 		if err != nil {
 			return err
 		}
-
-		// datasource
 		var d datasource.Datasource
 		switch u.Scheme {
-		case "s3":
+		case datasource.S3:
+			cfg, err := config.LoadDefaultConfig(ctx)
+			if err != nil {
+				return err
+			}
+			if cfg.Region == "" {
+				cfg.Region = defaultRegion
+			}
 			d, err = s3.New(cfg, dsn)
 			if err != nil {
 				return err
 			}
-		case "local":
+		case datasource.Local:
 			d, err = local.New(dsn)
 			if err != nil {
 				return err
 			}
-		case "fake":
+		case datasource.Fake:
 			d, err = fake.New(dsn)
 			if err != nil {
 				return err
@@ -94,7 +90,7 @@ var rootCmd = &cobra.Command{
 		// parser
 		var p parser.Parser
 		switch parserType {
-		case "rdsaudit":
+		case parser.RDSAudit:
 			p = rdsaudit.New()
 		default:
 			return fmt.Errorf("unsuppoted parser: %s", parserType)
@@ -131,6 +127,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&parserType, "parser", "p", "", "parser type")
+	rootCmd.Flags().StringVarP(&parserType, "parser", "p", parser.RDSAudit, "parser type")
 	rootCmd.Flags().StringSliceVarP(&filters, "filter", "f", []string{}, "filter")
 }

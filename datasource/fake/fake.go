@@ -58,7 +58,7 @@ func New(dsn string) (*Fake, error) {
 	if err != nil {
 		return nil, err
 	}
-	if u.Scheme != "fake" {
+	if u.Scheme != datasource.Fake {
 		return nil, fmt.Errorf("invalid fake url: %s", dsn)
 	}
 	ds := defaultDuration
@@ -72,7 +72,7 @@ func New(dsn string) (*Fake, error) {
 	var p parser.Parser
 	pt := u.Host
 	switch pt {
-	case "rdsaudit":
+	case parser.RDSAudit:
 		p = rdsaudit.New()
 	default:
 		return nil, fmt.Errorf("unsupported parser: %s", pt)
