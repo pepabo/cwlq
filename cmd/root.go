@@ -30,8 +30,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const defaultRegion = "ap-northeast-1"
-
 var (
 	parserType string
 	filters    []string
