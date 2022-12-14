@@ -10,7 +10,11 @@ $ cwlq s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.hos
 
 ## Support datasource
 
-### S3 bucket
+### Amazon CloudWatch Logs directly
+
+WIP
+
+### Amazon S3
 
 `s3://bucket/path/to`
 
