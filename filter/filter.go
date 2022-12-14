@@ -7,7 +7,7 @@ import (
 	"github.com/antonmedv/expr"
 	"github.com/antonmedv/expr/file"
 	"github.com/antonmedv/expr/parser/lexer"
-	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlq/parser"
 )
 
 type Filter struct {

@@ -25,8 +25,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/pepabo/cwlf"
-	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlq"
+	"github.com/pepabo/cwlq/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -38,13 +38,13 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cwlf [DATASOURCE_DSN]",
-	Short: "CloudWatch Logs Filter",
-	Long:  `CloudWatch Logs Filter.`,
+	Use:   "cwlq [DATASOURCE_DSN]",
+	Short: "cwlq",
+	Long:  `cwlq`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dsn := args[0]
-		c, err := cwlf.New(dsn, parserType, filters)
+		c, err := cwlq.New(dsn, parserType, filters)
 		if err != nil {
 			return err
 		}

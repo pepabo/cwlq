@@ -3,7 +3,7 @@ package outer
 import (
 	"context"
 
-	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlq/parser"
 )
 
 type Outer interface {

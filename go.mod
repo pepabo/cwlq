@@ -1,4 +1,4 @@
-module github.com/pepabo/cwlf
+module github.com/pepabo/cwlq
 
 go 1.19
 

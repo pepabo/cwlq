@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pepabo/cwlf/datasource"
+	"github.com/pepabo/cwlq/datasource"
 )
 
 var _ datasource.Datasource = (*Local)(nil)

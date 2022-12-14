@@ -1,9 +1,9 @@
-# cwlf
+# cwlq
 
 ## Usage
 
 ``` console
-$ cwlf s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.host == '10.0.1.123'" --filter "message.object contains 'INSERT'"
+$ cwlq s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.host == '10.0.1.123'" --filter "message.object contains 'INSERT'"
 ```
 
 ## Support datasource

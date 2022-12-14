@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/go-faker/faker/v4"
-	"github.com/pepabo/cwlf/datasource"
-	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlq/datasource"
+	"github.com/pepabo/cwlq/parser"
 )
 
 var _ parser.Parser = (*RDSAudit)(nil)

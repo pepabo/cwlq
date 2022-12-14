@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/pepabo/cwlf/cmd"
+import "github.com/pepabo/cwlq/cmd"
 
 func main() {
 	cmd.Execute()

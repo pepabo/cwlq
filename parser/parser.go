@@ -3,7 +3,7 @@ package parser
 import (
 	"context"
 
-	"github.com/pepabo/cwlf/datasource"
+	"github.com/pepabo/cwlq/datasource"
 )
 
 const RDSAudit = "rdsaudit"

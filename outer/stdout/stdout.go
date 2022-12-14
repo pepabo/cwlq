@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/pepabo/cwlf/outer"
-	"github.com/pepabo/cwlf/parser"
+	"github.com/pepabo/cwlq/outer"
+	"github.com/pepabo/cwlq/parser"
 )
 
 var _ outer.Outer = (*Stdout)(nil)

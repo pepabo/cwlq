@@ -1,4 +1,4 @@
-PKG = github.com/pepabo/cwlf
+PKG = github.com/pepabo/cwlq
 COMMIT = $$(git describe --tags --always)
 OSNAME=${shell uname -s}
 ifeq ($(OSNAME),Darwin)
@@ -22,7 +22,7 @@ lint:
 	golangci-lint run ./...
 
 build:
-	go build -ldflags="$(BUILD_LDFLAGS)" -o cwlf cmd/cwlf/main.go
+	go build -ldflags="$(BUILD_LDFLAGS)" -o cwlq cmd/cwlq/main.go
 
 depsdev:
 	go install github.com/Songmu/ghch/cmd/ghch@latest

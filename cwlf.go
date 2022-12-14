@@ -1,4 +1,4 @@
-package cwlf
+package cwlq
 
 import (
 	"context"
@@ -6,15 +6,15 @@ import (
 	"net/url"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/pepabo/cwlf/datasource"
-	"github.com/pepabo/cwlf/datasource/fake"
-	"github.com/pepabo/cwlf/datasource/local"
-	"github.com/pepabo/cwlf/datasource/s3"
-	"github.com/pepabo/cwlf/filter"
-	"github.com/pepabo/cwlf/outer"
-	"github.com/pepabo/cwlf/outer/stdout"
-	"github.com/pepabo/cwlf/parser"
-	"github.com/pepabo/cwlf/parser/rdsaudit"
+	"github.com/pepabo/cwlq/datasource"
+	"github.com/pepabo/cwlq/datasource/fake"
+	"github.com/pepabo/cwlq/datasource/local"
+	"github.com/pepabo/cwlq/datasource/s3"
+	"github.com/pepabo/cwlq/filter"
+	"github.com/pepabo/cwlq/outer"
+	"github.com/pepabo/cwlq/outer/stdout"
+	"github.com/pepabo/cwlq/parser"
+	"github.com/pepabo/cwlq/parser/rdsaudit"
 )
 
 const defaultRegion = "ap-northeast-1"

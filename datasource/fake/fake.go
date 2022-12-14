@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/k1LoW/duration"
-	"github.com/pepabo/cwlf/datasource"
-	"github.com/pepabo/cwlf/parser"
-	"github.com/pepabo/cwlf/parser/rdsaudit"
+	"github.com/pepabo/cwlq/datasource"
+	"github.com/pepabo/cwlq/parser"
+	"github.com/pepabo/cwlq/parser/rdsaudit"
 )
 
 const defaultDuration = "1min"
