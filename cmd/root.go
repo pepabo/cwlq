@@ -40,7 +40,10 @@ import (
 
 const defaultRegion = "ap-northeast-1"
 
-var fparser string
+var (
+	parserType string
+	filters    []string
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "cwlf [DATASOURCE_DSN]",
@@ -90,18 +93,18 @@ var rootCmd = &cobra.Command{
 
 		// parser
 		var p parser.Parser
-		switch fparser {
+		switch parserType {
 		case "rdsaudit":
 			p = rdsaudit.New()
 		default:
-			return fmt.Errorf("unsuppoted parser: %s", fparser)
+			return fmt.Errorf("unsuppoted parser: %s", parserType)
 		}
 
 		// filter
-		f := filter.New([]string{})
+		f := filter.New(filters)
 
 		for e := range f.Filter(ctx, p.Parse(ctx, d.Fetch(ctx))) {
-			fmt.Println(string(e.LogEvent.Raw))
+			fmt.Println(e.LogEvent.Raw)
 		}
 
 		if err := d.Err(); err != nil {
@@ -109,6 +112,10 @@ var rootCmd = &cobra.Command{
 		}
 
 		if err := p.Err(); err != nil {
+			return err
+		}
+
+		if err := f.Err(); err != nil {
 			return err
 		}
 
@@ -124,5 +131,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&fparser, "parser", "p", "", "parser type")
+	rootCmd.Flags().StringVarP(&parserType, "parser", "p", "", "parser type")
+	rootCmd.Flags().StringSliceVarP(&filters, "filter", "f", []string{}, "filter")
 }

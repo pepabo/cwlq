@@ -81,7 +81,7 @@ func (r *RDSAudit) NewFakeLogEvent() (*datasource.LogEvent, error) {
 	if err != nil {
 		return nil, err
 	}
-	le.Raw = raw
+	le.Raw = string(raw)
 
 	return le, nil
 }

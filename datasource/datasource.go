@@ -13,7 +13,7 @@ type LogEvent struct {
 	ID        string
 	Timestamp time.Time
 	Message   string
-	Raw       []byte
+	Raw       string
 }
 
 type Datasource interface {
@@ -50,6 +50,6 @@ func (e *LogEvent) UnmarshalJSON(b []byte) error {
 	e.ID = s.ID
 	e.Timestamp = time.UnixMilli(s.Timestamp)
 	e.Message = s.Message
-	e.Raw = b
+	e.Raw = string(b)
 	return nil
 }
