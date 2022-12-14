@@ -51,6 +51,11 @@ func (r *RDSAudit) Parse(ctx context.Context, in <-chan *datasource.LogEvent) <-
 				Data:     a.ToMap(),
 				LogEvent: e,
 			}
+			select {
+			case <-ctx.Done():
+				break
+			default:
+			}
 		}
 	}()
 	return out

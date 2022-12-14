@@ -22,6 +22,11 @@ func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *p
 		if len(f.conds) == 0 {
 			for i := range in {
 				out <- i
+				select {
+				case <-ctx.Done():
+					break
+				default:
+				}
 			}
 		} else {
 		L:
@@ -40,6 +45,11 @@ func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *p
 					if tf {
 						out <- i
 					}
+				}
+				select {
+				case <-ctx.Done():
+					break L
+				default:
 				}
 			}
 		}

@@ -75,6 +75,13 @@ func (s *S3) Fetch(ctx context.Context) <-chan *datasource.LogEvent {
 					s.err = err
 					break L
 				}
+
+				select {
+				case <-ctx.Done():
+					break L
+				default:
+				}
+
 			}
 			if o.NextContinuationToken == nil {
 				break L

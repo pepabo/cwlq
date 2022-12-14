@@ -23,18 +23,10 @@ package cmd
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 	"os"
 
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/pepabo/cwlf/datasource"
-	"github.com/pepabo/cwlf/datasource/fake"
-	"github.com/pepabo/cwlf/datasource/local"
-	"github.com/pepabo/cwlf/datasource/s3"
-	"github.com/pepabo/cwlf/filter"
+	"github.com/pepabo/cwlf"
 	"github.com/pepabo/cwlf/parser"
-	"github.com/pepabo/cwlf/parser/rdsaudit"
 	"github.com/spf13/cobra"
 )
 
@@ -52,69 +44,14 @@ var rootCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dsn := args[0]
-		ctx := context.Background()
-
-		// datasource
-		u, err := url.Parse(dsn)
+		c, err := cwlf.New(dsn, parserType, filters)
 		if err != nil {
 			return err
 		}
-		var d datasource.Datasource
-		switch u.Scheme {
-		case datasource.S3:
-			cfg, err := config.LoadDefaultConfig(ctx)
-			if err != nil {
-				return err
-			}
-			if cfg.Region == "" {
-				cfg.Region = defaultRegion
-			}
-			d, err = s3.New(cfg, dsn)
-			if err != nil {
-				return err
-			}
-		case datasource.Local:
-			d, err = local.New(dsn)
-			if err != nil {
-				return err
-			}
-		case datasource.Fake:
-			d, err = fake.New(dsn)
-			if err != nil {
-				return err
-			}
-		default:
-			return fmt.Errorf("unsuppoted scheme: %s", dsn)
-		}
-
-		// parser
-		var p parser.Parser
-		switch parserType {
-		case parser.RDSAudit:
-			p = rdsaudit.New()
-		default:
-			return fmt.Errorf("unsuppoted parser: %s", parserType)
-		}
-
-		// filter
-		f := filter.New(filters)
-
-		for e := range f.Filter(ctx, p.Parse(ctx, d.Fetch(ctx))) {
-			fmt.Println(e.LogEvent.Raw)
-		}
-
-		if err := d.Err(); err != nil {
+		ctx := context.Background()
+		if err := c.Run(ctx); err != nil {
 			return err
 		}
-
-		if err := p.Err(); err != nil {
-			return err
-		}
-
-		if err := f.Err(); err != nil {
-			return err
-		}
-
 		return nil
 	},
 }

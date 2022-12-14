@@ -62,6 +62,12 @@ func (d *Local) Fetch(ctx context.Context) <-chan *datasource.LogEvent {
 				for _, le := range l.LogEvents {
 					out <- le
 				}
+
+				select {
+				case <-ctx.Done():
+					break
+				default:
+				}
 			}
 			return nil
 		}); err != nil {
