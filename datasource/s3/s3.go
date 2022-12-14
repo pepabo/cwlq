@@ -98,11 +98,11 @@ func (s *S3) Err() error {
 
 func New(cfg aws.Config, dsn string) (*S3, error) {
 	if !strings.HasPrefix(dsn, "s3://") {
-		return nil, fmt.Errorf("invalid s3 bucket url: %s", dsn)
+		return nil, fmt.Errorf("invalid s3 bucket dsn: %s", dsn)
 	}
 	splitted := strings.SplitN(strings.TrimPrefix(dsn, "s3://"), "/", 2)
 	if len(splitted) == 0 || splitted[0] == "" {
-		return nil, fmt.Errorf("invalid s3 bucket url: %s", dsn)
+		return nil, fmt.Errorf("invalid s3 bucket dsn: %s", dsn)
 	}
 	bucket := splitted[0]
 	prefix := splitted[1]

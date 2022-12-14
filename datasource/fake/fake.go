@@ -59,7 +59,7 @@ func New(dsn string) (*Fake, error) {
 		return nil, err
 	}
 	if u.Scheme != datasource.Fake {
-		return nil, fmt.Errorf("invalid fake url: %s", dsn)
+		return nil, fmt.Errorf("invalid fake dsn: %s", dsn)
 	}
 	ds := defaultDuration
 	if u.Query().Has("duration") {
