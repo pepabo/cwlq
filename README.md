@@ -24,7 +24,7 @@ $ cwlf s3://myrds-audit-logs/2022/12/11/ --parser rdsaudit --filter "message.hos
 
 ### `rdsaudit`
 
-Parser for logs via MariaDB Audit Plugin for Amazon RDS.
+Parser for gziped logs via MariaDB Audit Plugin for Amazon RDS.
 
 | Field | Example | Description |
 | --- | --- | --- |
