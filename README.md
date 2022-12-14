@@ -50,3 +50,21 @@ Parser for gziped logs via MariaDB Audit Plugin for Amazon RDS.
 | `message.retcode` | `0` | [The return code of the logged operation.](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.MySQL.Options.AuditPlugin.html) |
 | `message.connection_type` | `1` | [The security state of the connection to the server.](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.MySQL.Options.AuditPlugin.html) |
 | `raw` | `` | Raw data of log event. |
+
+## Install
+
+**homebrew tap:**
+
+```console
+$ brew install pepabo/tap/cwlq
+```
+
+**manually:**
+
+Download binany from [releases page](https://github.com/pepabo/cwlq/releases)
+
+**go install:**
+
+```console
+$ go install github.com/pepabo/cwlq@latest
+```
