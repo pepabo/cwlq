@@ -1,0 +1,63 @@
+before:
+  hooks:
+    - go mod download
+    - go mod tidy
+builds:
+  -
+    id: cwlq-darwin
+    ldflags:
+      - -s -w -X github.com/pepabo/cwlq.version={{.Version}} -X github.com/pepabo/cwlq.commit={{.FullCommit}} -X github.com/pepabo/cwlq.date={{.Date}} -X github.com/pepabo/cwlq/version.Version={{.Version}}
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/cwlq/main.go
+  -
+    id: cwlq-linux
+    ldflags:
+      - -s -w -X github.com/pepabo/cwlq.version={{.Version}} -X github.com/pepabo/cwlq.commit={{.FullCommit}} -X github.com/pepabo/cwlq.date={{.Date}} -X github.com/pepabo/cwlq/version.Version={{.Version}}
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/cwlq/main.go
+archives:
+  -
+    id: cwlq-archive
+    name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    format_overrides:
+      - goos: darwin
+        format: zip
+    files:
+      - CREDITS
+      - README.md
+      - CHANGELOG.md
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Version }}-next"
+changelog:
+  skip: true
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+nfpms:
+  -
+    id: cwlq-nfpms
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}-1_{{ .Arch }}"
+    builds:
+      - cwlq-linux
+    homepage: https://github.com/pepabo/cwlq
+    maintainer: 'GMO Pepabo, inc.'
+    description: 'cwlq is a tool/package for querying logs (of Amazon CloudWatch Logs) stored in various datasources.'
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/bin
+    epoch: 1
