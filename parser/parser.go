@@ -9,7 +9,7 @@ import (
 const RDSAudit = "rdsaudit"
 
 type Parsed struct {
-	Data     map[string]interface{}
+	Message  map[string]interface{}
 	LogEvent *datasource.LogEvent
 }
 

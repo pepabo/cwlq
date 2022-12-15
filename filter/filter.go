@@ -2,6 +2,7 @@ package filter
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/antonmedv/expr"
@@ -10,8 +11,15 @@ import (
 	"github.com/pepabo/cwlq/parser"
 )
 
+const (
+	timestampKey = "timestamp"
+	messageKey   = "message"
+	rawKey       = "raw"
+)
+
 type Filter struct {
 	conds []string
+	fns   map[string]interface{}
 	err   error
 }
 
@@ -19,38 +27,20 @@ func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *p
 	out := make(chan *parser.Parsed)
 	go func() {
 		defer close(out)
-		if len(f.conds) == 0 {
-			for i := range in {
-				out <- i
-				select {
-				case <-ctx.Done():
-					break
-				default:
-				}
+	L:
+		for i := range in {
+			tf, err := f.evalConds(i)
+			if err != nil {
+				f.err = err
+				break L
 			}
-		} else {
-		L:
-			for i := range in {
-				for _, c := range f.conds {
-					env := map[string]interface{}{
-						"timestamp": i.LogEvent.Timestamp.UnixMilli(),
-						"message":   i.Data,
-						"raw":       i.LogEvent.Raw,
-					}
-					tf, err := evalCond(c, env)
-					if err != nil {
-						f.err = err
-						break L
-					}
-					if tf {
-						out <- i
-					}
-				}
-				select {
-				case <-ctx.Done():
-					break L
-				default:
-				}
+			if tf {
+				out <- i
+			}
+			select {
+			case <-ctx.Done():
+				break L
+			default:
 			}
 		}
 	}()
@@ -64,11 +54,47 @@ func New(conds []string) *Filter {
 	}
 	return &Filter{
 		conds: trimed,
+		fns:   map[string]interface{}{},
 	}
 }
 
 func (f *Filter) Err() error {
 	return f.err
+}
+
+func (f *Filter) AddFunc(key string, fn interface{}) error {
+	if key == timestampKey || key == messageKey || key == rawKey {
+		return fmt.Errorf("'%s' is reserved", key)
+	}
+	if _, ok := f.fns[key]; ok {
+		return fmt.Errorf("'%s' is already exists", key)
+	}
+	f.fns[key] = fn
+	return nil
+}
+
+func (f *Filter) evalConds(p *parser.Parsed) (bool, error) {
+	if len(f.conds) == 0 {
+		return true, nil
+	}
+	for _, c := range f.conds {
+		env := map[string]interface{}{
+			timestampKey: p.LogEvent.Timestamp.UnixMilli(),
+			messageKey:   p.Message,
+			rawKey:       p.LogEvent.Raw,
+		}
+		for k, fn := range f.fns {
+			env[k] = fn
+		}
+		tf, err := evalCond(c, env)
+		if err != nil {
+			return false, err
+		}
+		if tf {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func evalCond(cond string, env interface{}) (bool, error) {
