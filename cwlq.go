@@ -103,5 +103,9 @@ func (c *Cwlf) Run(ctx context.Context) (err error) {
 		return err
 	}
 
+	if err := c.o.Err(); err != nil {
+		return err
+	}
+
 	return nil
 }
