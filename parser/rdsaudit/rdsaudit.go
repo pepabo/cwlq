@@ -42,15 +42,12 @@ func (r *RDSAudit) Parse(ctx context.Context, in <-chan *datasource.LogEvent) <-
 	go func() {
 		defer close(out)
 		for e := range in {
-			a, err := parseMessage(e.Message)
+			p, err := r.ParseLogEvent(e)
 			if err != nil {
 				r.err = err
 				break
 			}
-			out <- &parser.Parsed{
-				Message:  a.ToMap(),
-				LogEvent: e,
-			}
+			out <- p
 			select {
 			case <-ctx.Done():
 				break
@@ -89,6 +86,17 @@ func (r *RDSAudit) NewFakeLogEvent() (*datasource.LogEvent, error) {
 	le.Raw = string(raw)
 
 	return le, nil
+}
+
+func (r *RDSAudit) ParseLogEvent(e *datasource.LogEvent) (*parser.Parsed, error) {
+	a, err := parseMessage(e.Message)
+	if err != nil {
+		return nil, err
+	}
+	return &parser.Parsed{
+		Data:     a.ToMap(),
+		LogEvent: e,
+	}, nil
 }
 
 func (r *RDSAudit) Err() error {
