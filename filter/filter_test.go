@@ -50,7 +50,9 @@ func TestEvalConds(t *testing.T) {
 		t.Run(fmt.Sprintf("%v", tt.conds), func(t *testing.T) {
 			f := New(tt.conds)
 			for k, fn := range tt.fns {
-				f.AddFunc(k, fn)
+				if err := f.AddFunc(k, fn); err != nil {
+					t.Fatal(err)
+				}
 			}
 			got, err := f.evalConds(tt.in)
 			if err != nil {
