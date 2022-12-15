@@ -84,6 +84,14 @@ func (c *Cwlf) Outer(o outer.Outer) {
 	c.o = o
 }
 
+func (c *Cwlf) Total() int64 {
+	return c.f.Total()
+}
+
+func (c *Cwlf) Filtered() int64 {
+	return c.f.Filtered()
+}
+
 func (c *Cwlf) Run(ctx context.Context) (err error) {
 	c.o.Write(ctx, c.f.Filter(ctx, c.p.Parse(ctx, c.d.Fetch(ctx))))
 
