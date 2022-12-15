@@ -18,9 +18,11 @@ const (
 )
 
 type Filter struct {
-	conds []string
-	fns   map[string]interface{}
-	err   error
+	conds    []string
+	fns      map[string]interface{}
+	total    int64
+	filtered int64
+	err      error
 }
 
 func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *parser.Parsed {
@@ -34,7 +36,9 @@ func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *p
 				f.err = err
 				break L
 			}
+			f.total += 1
 			if tf {
+				f.filtered += 1
 				out <- i
 			}
 			select {
@@ -56,6 +60,14 @@ func New(conds []string) *Filter {
 		conds: trimed,
 		fns:   map[string]interface{}{},
 	}
+}
+
+func (f *Filter) Total() int64 {
+	return f.total
+}
+
+func (f *Filter) Filtered() int64 {
+	return f.filtered
 }
 
 func (f *Filter) Err() error {
