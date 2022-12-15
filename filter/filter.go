@@ -31,12 +31,12 @@ func (f *Filter) Filter(ctx context.Context, in <-chan *parser.Parsed) <-chan *p
 		defer close(out)
 	L:
 		for i := range in {
-			f.total += 1
 			tf, err := f.evalConds(i)
 			if err != nil {
 				f.err = err
 				break L
 			}
+			f.total += 1
 			if tf {
 				f.filtered += 1
 				out <- i
