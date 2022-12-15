@@ -48,7 +48,7 @@ func (r *RDSAudit) Parse(ctx context.Context, in <-chan *datasource.LogEvent) <-
 				break
 			}
 			out <- &parser.Parsed{
-				Data:     a.ToMap(),
+				Message:  a.ToMap(),
 				LogEvent: e,
 			}
 			select {
