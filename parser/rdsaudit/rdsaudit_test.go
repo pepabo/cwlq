@@ -18,6 +18,9 @@ func TestParse(t *testing.T) {
 	in <- le
 	out := r.Parse(context.Background(), in)
 	p := <-out
+	if p == nil {
+		t.Fatal(r.Err())
+	}
 	got := p.LogEvent
 	if diff := cmp.Diff(got, le, nil); diff != "" {
 		t.Errorf("%s", diff)

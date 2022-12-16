@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-faker/faker/v4"
+	"github.com/k1LoW/single"
 	"github.com/pepabo/cwlq/datasource"
 	"github.com/pepabo/cwlq/parser"
 )
@@ -42,12 +43,14 @@ func (r *RDSAudit) Parse(ctx context.Context, in <-chan *datasource.LogEvent) <-
 	go func() {
 		defer close(out)
 		for e := range in {
-			p, err := r.ParseLogEvent(e)
+			ps, err := r.ParseLogEvent(e)
 			if err != nil {
 				r.err = err
 				break
 			}
-			out <- p
+			for _, p := range ps {
+				out <- p
+			}
 			select {
 			case <-ctx.Done():
 				break
@@ -68,7 +71,9 @@ func (r *RDSAudit) NewFakeLogEvent() (*datasource.LogEvent, error) {
 		return nil, err
 	}
 	if al.Operation == "QUERY" {
-		al.Object = fmt.Sprintf("SELECT * FROM %s;", al.Object)
+		al.Object = single.Quote(fmt.Sprintf("SELECT * FROM %s;", al.Object))
+	} else {
+		al.Object = single.Quote(al.Object)
 	}
 	msg, err := al.ToCSV()
 	if err != nil {
@@ -88,15 +93,20 @@ func (r *RDSAudit) NewFakeLogEvent() (*datasource.LogEvent, error) {
 	return le, nil
 }
 
-func (r *RDSAudit) ParseLogEvent(e *datasource.LogEvent) (*parser.Parsed, error) {
-	a, err := parseMessage(e.Message)
-	if err != nil {
-		return nil, err
+func (r *RDSAudit) ParseLogEvent(e *datasource.LogEvent) ([]*parser.Parsed, error) {
+	msgs := strings.Split(e.Message, "\n")
+	ps := []*parser.Parsed{}
+	for _, msg := range msgs {
+		a, err := parseMessage(msg)
+		if err != nil {
+			return nil, err
+		}
+		ps = append(ps, &parser.Parsed{
+			Message:  a.ToMap(),
+			LogEvent: e,
+		})
 	}
-	return &parser.Parsed{
-		Message:  a.ToMap(),
-		LogEvent: e,
-	}, nil
+	return ps, nil
 }
 
 func (r *RDSAudit) Err() error {
@@ -143,7 +153,7 @@ func (a *AuditLog) ToCSV() (string, error) {
 }
 
 func parseMessage(msg string) (*AuditLog, error) {
-	record, err := parseCSV(msg)
+	record, err := parseCSVHeuristically(msg)
 	if err != nil {
 		return nil, err
 	}
@@ -177,36 +187,41 @@ func parseMessage(msg string) (*AuditLog, error) {
 	return al, nil
 }
 
-func parseCSV(line string) ([]string, error) {
+func parseCSVHeuristically(line string) ([]string, error) {
 	const (
-		delimiter = ','
-		quote     = '\''
-		escape    = '\\'
+		delimiter = ","
+		quote     = "'"
 	)
-	record := []string{}
-	data := []rune{}
+	head := []string{}
+	tail := []string{}
+	splitted := strings.Split(line, delimiter)
+	c := len(splitted)
+	for i := 1; i < c; i++ {
+		if strings.HasSuffix(splitted[c-i], quote) {
+			break
+		}
+		tail = append([]string{splitted[c-i]}, tail...)
+	}
+	o := ""
 	in := false
-	for _, c := range line {
-		switch c {
-		case quote:
-			if len(data) != 0 && data[len(data)-1] == escape {
-				data = append(data, c)
-				continue
-			}
-			in = !in
-		case delimiter:
-			if in {
-				data = append(data, c)
-			} else {
-				record = append(record, string(data))
-				data = []rune{}
-			}
-		default:
-			data = append(data, c)
+	for _, s := range splitted[:c-len(tail)] {
+		if strings.HasPrefix(s, quote) {
+			in = true
+		}
+		if in {
+			o += s
+		} else {
+			head = append(head, s)
 		}
 	}
-	record = append(record, string(data))
-	return record, nil
+	if o == "" {
+		return append(append(head, o), tail...), nil
+	}
+	u, err := single.Unquote(o)
+	if err != nil {
+		return nil, fmt.Errorf("object unquote error: %w: %s", err, line)
+	}
+	return append(append(head, u), tail...), nil
 }
 
 func init() {

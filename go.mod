@@ -10,6 +10,7 @@ require (
 	github.com/go-faker/faker/v4 v4.0.0-beta.4
 	github.com/google/go-cmp v0.5.8
 	github.com/k1LoW/duration v1.2.0
+	github.com/k1LoW/single v1.0.0
 	github.com/spf13/cobra v1.6.1
 )
 
