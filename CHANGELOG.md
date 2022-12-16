@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.4.1](https://github.com/pepabo/cwlq/compare/v0.4.0...v0.4.1) (2022-12-16)
+
+* Fix handling error [#6](https://github.com/pepabo/cwlq/pull/6) ([k1LoW](https://github.com/k1LoW))
+
 ## [v0.4.0](https://github.com/pepabo/cwlq/compare/v0.3.0...v0.4.0) (2022-12-15)
 
 * Support getting total/filtered via Cwlf [#5](https://github.com/pepabo/cwlq/pull/5) ([k1LoW](https://github.com/k1LoW))
