@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.5.0](https://github.com/pepabo/cwlq/compare/v0.4.1...v0.5.0) (2022-12-16)
+
+* Fix rdsaudit parse [#7](https://github.com/pepabo/cwlq/pull/7) ([k1LoW](https://github.com/k1LoW))
+
 ## [v0.4.1](https://github.com/pepabo/cwlq/compare/v0.4.0...v0.4.1) (2022-12-16)
 
 * Fix handling error [#6](https://github.com/pepabo/cwlq/pull/6) ([k1LoW](https://github.com/k1LoW))
