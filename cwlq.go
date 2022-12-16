@@ -96,7 +96,9 @@ func (c *Cwlf) Run(ctx context.Context) (err error) {
 	c.o.Write(ctx, c.f.Filter(ctx, c.p.Parse(ctx, c.d.Fetch(ctx))))
 
 	defer func() {
-		err = c.o.Close()
+		if cerr := c.o.Close(); cerr != nil {
+			err = cerr
+		}
 	}()
 
 	if err := c.d.Err(); err != nil {
