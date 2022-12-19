@@ -102,8 +102,9 @@ func (r *RDSAudit) ParseLogEvent(e *datasource.LogEvent) ([]*parser.Parsed, erro
 			return nil, err
 		}
 		ps = append(ps, &parser.Parsed{
-			Message:  a.ToMap(),
-			LogEvent: e,
+			Timestamp: e.Timestamp.UnixMilli(),
+			Message:   a.ToMap(),
+			LogEvent:  e,
 		})
 	}
 	return ps, nil

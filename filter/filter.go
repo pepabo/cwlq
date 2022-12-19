@@ -91,7 +91,7 @@ func (f *Filter) evalConds(p *parser.Parsed) (bool, error) {
 	}
 	for _, c := range f.conds {
 		env := map[string]interface{}{
-			timestampKey: p.LogEvent.Timestamp.UnixMilli(),
+			timestampKey: p.Timestamp,
 			messageKey:   p.Message,
 			rawKey:       p.LogEvent.Raw,
 		}
