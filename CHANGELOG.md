@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.6.1](https://github.com/pepabo/cwlq/compare/v0.6.0...v0.6.1) (2022-12-19)
+
+* Export fields [#10](https://github.com/pepabo/cwlq/pull/10) ([k1LoW](https://github.com/k1LoW))
+
 ## [v0.6.0](https://github.com/pepabo/cwlq/compare/v0.5.0...v0.6.0) (2022-12-19)
 
 * Update pkgs [#9](https://github.com/pepabo/cwlq/pull/9) ([k1LoW](https://github.com/k1LoW))
