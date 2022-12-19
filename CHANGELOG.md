@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.6.0](https://github.com/pepabo/cwlq/compare/v0.5.0...v0.6.0) (2022-12-19)
+
+* Update pkgs [#9](https://github.com/pepabo/cwlq/pull/9) ([k1LoW](https://github.com/k1LoW))
+* Add Parser.Timestamp [#8](https://github.com/pepabo/cwlq/pull/8) ([k1LoW](https://github.com/k1LoW))
+
 ## [v0.5.0](https://github.com/pepabo/cwlq/compare/v0.4.1...v0.5.0) (2022-12-16)
 
 * Fix rdsaudit parse [#7](https://github.com/pepabo/cwlq/pull/7) ([k1LoW](https://github.com/k1LoW))
