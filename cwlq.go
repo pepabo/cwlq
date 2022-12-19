@@ -20,10 +20,10 @@ import (
 const defaultRegion = "ap-northeast-1"
 
 type Cwlf struct {
-	d datasource.Datasource
-	p parser.Parser
-	f *filter.Filter
-	o outer.Outer
+	D datasource.Datasource
+	P parser.Parser
+	F *filter.Filter
+	O outer.Outer
 }
 
 func New(dsn, parserType string, filters []string) (*Cwlf, error) {
@@ -73,47 +73,47 @@ func New(dsn, parserType string, filters []string) (*Cwlf, error) {
 	f := filter.New(filters)
 
 	return &Cwlf{
-		d: d,
-		p: p,
-		f: f,
-		o: stdout.New(),
+		D: d,
+		P: p,
+		F: f,
+		O: stdout.New(),
 	}, nil
 }
 
 func (c *Cwlf) Outer(o outer.Outer) {
-	c.o = o
+	c.O = o
 }
 
 func (c *Cwlf) Total() int64 {
-	return c.f.Total()
+	return c.F.Total()
 }
 
 func (c *Cwlf) Filtered() int64 {
-	return c.f.Filtered()
+	return c.F.Filtered()
 }
 
 func (c *Cwlf) Run(ctx context.Context) (err error) {
-	c.o.Write(ctx, c.f.Filter(ctx, c.p.Parse(ctx, c.d.Fetch(ctx))))
+	c.O.Write(ctx, c.F.Filter(ctx, c.P.Parse(ctx, c.D.Fetch(ctx))))
 
 	defer func() {
-		if cerr := c.o.Close(); cerr != nil {
+		if cerr := c.O.Close(); cerr != nil {
 			err = cerr
 		}
 	}()
 
-	if err := c.d.Err(); err != nil {
+	if err := c.D.Err(); err != nil {
 		return err
 	}
 
-	if err := c.p.Err(); err != nil {
+	if err := c.P.Err(); err != nil {
 		return err
 	}
 
-	if err := c.f.Err(); err != nil {
+	if err := c.F.Err(); err != nil {
 		return err
 	}
 
-	if err := c.o.Err(); err != nil {
+	if err := c.O.Err(); err != nil {
 		return err
 	}
 
