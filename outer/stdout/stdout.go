@@ -2,6 +2,7 @@ package stdout
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -22,8 +23,13 @@ func New() *Stdout {
 }
 
 func (o *Stdout) Write(ctx context.Context, in <-chan *parser.Parsed) {
-	for e := range in {
-		if _, err := fmt.Fprintf(o.out, "%s\n", e.LogEvent.Raw); err != nil {
+	for p := range in {
+		b, err := json.Marshal(p)
+		if err != nil {
+			o.err = err
+			break
+		}
+		if _, err := fmt.Fprintf(o.out, "%s\n", string(b)); err != nil {
 			o.err = err
 			break
 		}

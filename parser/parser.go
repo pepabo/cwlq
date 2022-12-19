@@ -9,8 +9,9 @@ import (
 const RDSAudit = "rdsaudit"
 
 type Parsed struct {
-	Message  map[string]interface{}
-	LogEvent *datasource.LogEvent
+	Timestamp int64                  `json:"timestamp"`
+	Message   map[string]interface{} `json:"message"`
+	LogEvent  *datasource.LogEvent   `json:"-"`
 }
 
 type Parser interface {
